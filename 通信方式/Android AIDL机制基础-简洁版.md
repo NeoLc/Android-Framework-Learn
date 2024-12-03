@@ -10,10 +10,10 @@ package com.test.dcc;
 import com.test.dcc.IDataCallback;
 
 interface IDataService {
-    void registerCallback(int type,int id, IDataCallback callback);
-    void unregisterCallback(int type,int id, IDataCallback callback);
+    void registerCallback(int type, int id, IDataCallback callback);
+    void unregisterCallback(int type, int id, IDataCallback callback);
 
-    int publishCommand(int type,int id,in byte[] data);
+    int publishCommand(int type, int id, in byte[] data);
 }
 ```
 aidl/com/test/dcc/IDataCallback.aidl
@@ -85,7 +85,7 @@ java_library {
 #include <com/test/dcc/BnDataService.h>
 
 class DataService : public BnDataService {
-	void registerCallback(int type, int id, IDataServiceCallback callback) { ... }
+    void registerCallback(int type, int id, IDataServiceCallback callback) { ... }
     void unregisterCallback(int type, int id, IDataServiceCallback callback) { ... }
 
     int publishCommand(int type, int id, char data[]) { ... }
@@ -118,10 +118,10 @@ int main(int argc, char **argv) {
 import com.test.dcc.IDataService.Stub;
 
 public final class DataServiceImpl extends Stub {
-	public void registerCallback(int type,int id, IDataServiceCallback callback) { ... }
-    public void unregisterCallback(int type,int id, IDataServiceCallback callback) { ... }
+    public void registerCallback(int type, int id, IDataServiceCallback callback) { ... }
+    public void unregisterCallback(int type, int id, IDataServiceCallback callback) { ... }
 
-    public int publishCommand(int type,int id,in byte[] data) { ... }
+    public int publishCommand(int type, int id, in byte[] data) { ... }
 }
 ```
 将实现类注册到`systemManager`中
@@ -130,7 +130,7 @@ public final class DataService extends SystemService {
 	private final DataServiceImpl mStub;
 	
 	public DataService(Context context) {
-		mStub = new DataServiceImpl(mContext);
+            mStub = new DataServiceImpl(mContext);
 	}
 	
 	@Override
@@ -138,7 +138,7 @@ public final class DataService extends SystemService {
 	
 	@Override
 	public void onStart() {
-		publishBinderService("service.name", mStub);
+            publishBinderService("service.name", mStub);
 	}
 }
 ```
@@ -156,29 +156,29 @@ public class DataServiceManager {
 	private IDataService mService;
 	
 	public DataServiceManager() {
-		getRemoteService();
+            getRemoteService();
 	}
 	
 	private void getRemoteService() {
-		IBinder binder = null;
-		while(true) {
-			binder = ServiceManager.getService(SERVICE_NAME);
-			if (binder != null) {
-				mService = ILumiDataService.Stub.asInterface(binder);
-				binder.linkToDeath(mDeathRecipient, 0);
-			}
-		}
+	    IBinder binder = null;
+	    while(true) {
+		binder = ServiceManager.getService(SERVICE_NAME);
+	            if (binder != null) {
+		    mService = ILumiDataService.Stub.asInterface(binder);
+		    binder.linkToDeath(mDeathRecipient, 0);
+	    	}
+	    }
 	}
 	
 	public void registerCallback(int type,int id, IDataCallback callback) {
-		mService.registerCallback(type, id, callback);
+	    mService.registerCallback(type, id, callback);
 	}
 	public void unregisterCallback(int type,int id, IDataCallback callback) {
-		mService.unregisterCallback(type, id, callback);
+            mService.unregisterCallback(type, id, callback);
 	}
 	
 	public int publishCommand(int type,int id,byte[] data) {
-		mService.publishCommand(type, id, data);
+	    mService.publishCommand(type, id, data);
 	}
 }
 ```
