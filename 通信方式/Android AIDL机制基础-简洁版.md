@@ -3,13 +3,13 @@
 
 ### 接口定义
 >最简单和常见的AIDL代码示例
+
 aidl/com/test/dcc/IDataService.aidl
-```
+```aidl
 package com.test.dcc;
 import com.test.dcc.IDataCallback;
 
-interface IDataService
-{
+interface IDataService {
     void registerCallback(int type,int id, IDataCallback callback);
     void unregisterCallback(int type,int id, IDataCallback callback);
 
@@ -17,19 +17,18 @@ interface IDataService
 }
 ```
 aidl/com/test/dcc/IDataCallback.aidl
-```
+```aidl
 package com.test.dcc;
 
-interface IDataCallback{
+interface IDataCallback {
     void onEvent(int type, int id, in byte[] data);
 }
 ```
 
 ### 接口编译
-编译方式多种多样, 只要能把AIDL接口添加到android编译系统即可
-+ 方式1
-单独的编译出c++或java的后端
-```
+编译方式多种多样, 只要能把AIDL接口**添加到android编译系统**即可
++ 方式1: 单独的编译出c++或java的后端
+```mk
 aidl_interface {
     name: "dataservice_aidl",
     unstable: true,
@@ -49,9 +48,8 @@ aidl_interface {
 }
 ```
 
-+ 方式2
-放置在系统框架(`frameworks/base/core/java/android`)中编译, 更加方便调用, 适用于系统接口.
-```
++ 方式2: 放置在系统框架(`frameworks/base/core/java/android`)中编译, 更加方便调用, 适用于系统接口.
+```mk
 java_defaults {
 	name: "framework-defaults",
 	...
@@ -64,9 +62,8 @@ java_defaults {
 }
 ```
 
-+ 方式3
-直接在调用侧和java一起混编
-```
++ 方式3: 直接在调用侧和java一起混编
+```mk
 java_library {
     name: "DataServiceSDK",
     installable: true,
@@ -128,7 +125,7 @@ public final class DataServiceImpl extends Stub {
 }
 ```
 将实现类注册到`systemManager`中
-```
+```java
 public final class DataService extends SystemService {
 	private final DataServiceImpl mStub;
 	
@@ -151,7 +148,7 @@ public final class DataService extends SystemService {
 
 + java调用AIDL接口
 过程很简单, 就是通过`ServiceManager`获取服务对象即可.
-```
+```java
 import com.test.dcc.IDataServiceCallback;
 import com.test.dcc.IDataService;
 
@@ -186,7 +183,7 @@ public class DataServiceManager {
 }
 ```
 编译过程也简单, 链接aidl的android库
-```
+```mk
 java_library {
     name: "DataServiceManager",
     srcs: [
